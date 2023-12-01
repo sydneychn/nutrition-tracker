@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TextInput, View, FlatList, Keyboard, Pressable, TouchableOpacity} from 'react-native';
-import Slider from '@react-native-community/slider';
+import Slider from '@react-native-community/slider'
 import PieChart from 'react-native-pie-chart';
 import Header from './components/header';
 import FoodItem from './components/foodItem';
@@ -20,7 +20,7 @@ export default function App() {
   const [fats, setFats] = useState('1');
   const [calories, setCalories] = useState('');
   const [totalCalories, setTotalCalories] = useState(640);
-
+  const macSum = carbs+protein+fats;
   const addFood = ( )=> {
     if (!food || !calories){
       alert('You left it blank!');
@@ -37,8 +37,7 @@ export default function App() {
     //Adds the new item to FlatList
     setFoods((prevFoods) => prevFoods.concat(newFood));
     //Updates the totalCalories
-    setTotalCalories(totalCalories + newFood.cals);
-
+    setTotalCalories(totalCalories + newFood.cals)
     setFood('');
     setCalories('');
     setCarbs('');
@@ -93,7 +92,7 @@ export default function App() {
                   />
                 </View>
                 <View style = {{flexDirection: 'row'}}>
-                  <Text style = {{marginVertical: 20, marginLeft: 10, marginRight:25.}}>Fat</Text>
+                  <Text style = {{marginVertical: 20, marginLeft: 10, marginRight:25}}>Fat</Text>
                   <Slider
                     style={styles.macrosSlider}
                     minimumValue={0}
@@ -104,7 +103,7 @@ export default function App() {
                 </View>
               </View>
                 {/*If macros add up to 0, show a default pie chart of equal values. Once slider is adjusted update piechart*/}
-                {(carbs+protein+fats) === 0 ? (
+                {(macSum) === 0 ? (
                   <PieChart widthAndHeight={100} series={[1, 1, 1]} sliceColor={['#2bae7c', '#87bda2', '#c9c9c9']} coverRadius={0.45} coverFill={'#FFF'} />
                 ) : (
                 <PieChart widthAndHeight={100} series={[protein, carbs, fats]} sliceColor={['#2bae7c', '#87bda2', '#c9c9c9']} coverRadius={0.45} coverFill={'#FFF'} />
