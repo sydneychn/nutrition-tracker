@@ -3,8 +3,7 @@ import {StyleSheet, Text, TextInput, View, FlatList, Keyboard, Pressable, Toucha
 import { PieChart } from 'react-native-chart-kit';
 import { MaterialIcons } from '@expo/vector-icons';
 import Header from './components/header';
-import FoodItem from './components/foodItem';
-
+import InputForm from './components/inputForm';
 
 export default function App() {
   //Hardcoded initial items for testing purposes
@@ -14,6 +13,7 @@ export default function App() {
     {name: 'Rice', cals: 200, carbs: 15, fats: 0, protein: 0, id: 2},
     {name: 'Eggs', cals: 70, carbs: 0, fats: 2, protein: 7, id: 3}
   ]);
+  
   const [food, setFood] = useState(''); //new item to be added to list
   const [carbs, setCarbs] = useState(0); //default item's carbs
   const [protein, setProtein] = useState(0); //default item's protein
@@ -22,6 +22,10 @@ export default function App() {
   const [totalCalories, setTotalCalories] = useState(640); //total calories 
   const [showInput, setShowInput] = useState(false) //state to show/hide input field
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  const [heightFt, setHeightFt] = useState('');
+  const [heightIn, setHeightIn] = useState('');
+  const [weight, setWeight] = useState('');
 
   //function that adds current item to the list and updates the total calories
   const addFood = ( )=> {
@@ -38,11 +42,10 @@ export default function App() {
       fats: parseFloat(fats),
       id: Date.now(),
     }
-    
-    setFoods((prevFoods) => {return [newFood, ...prevFoods]}); //Adds the new item to FlatList
-    
-    setTotalCalories(totalCalories + newFood.cals) //Updates the totalCalories
-    //sets default values
+    //Updates the the food list and totalCalories
+    setFoods((prevFoods) => {return [newFood, ...prevFoods]});
+    setTotalCalories(totalCalories + newFood.cals) 
+    //sets default values for inputs after new item is added
     setFood('');
     setCalories(0);
     setCarbs(0);
@@ -51,6 +54,7 @@ export default function App() {
     Keyboard.dismiss();
   }
 
+  //Getting Current Time
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentDate(new Date());
@@ -58,112 +62,71 @@ export default function App() {
     return () => clearInterval(timer);
     }, []);
 
-  
-
   return (
+    
     <TouchableWithoutFeedback onPress={() => {Keyboard.dismiss()
     console.log("hello test");}}>
       <View style = {styles.container}>
-        <View style = {styles.header} /*header*/> 
-          <Text style = {styles.title}>{currentDate.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</Text>
-          <Text style = {styles.title}>Welcome Back, Squid!</Text>
+        {/*Header Component*/}
+        <Header currentDate={currentDate}></Header> 
+        <View style = {styles.bodyInfoContainer}>
+        <View style={styles.inputSection}>
+        <Text>Height:</Text>
+        <View style={styles.heightInputContainer}>
+          <TextInput
+            style={styles.inputField}
+            placeholder="Ft"
+            keyboardType="numeric"
+            value={heightFt}
+            onChangeText={(text) => setHeightFt(text)}
+          />
+          <Text>Ft</Text>
+          <TextInput
+            style={styles.inputField}
+            placeholder="In"
+            keyboardType="numeric"
+            value={heightIn}
+            onChangeText={(text) => setHeightIn(text)}
+          />
+          <Text>In</Text>
+        </View>
+      </View>
+      <View style={styles.inputSection}>
+        <Text>Weight:</Text>
+        <TextInput
+          style={styles.inputField}
+          placeholder="lbs"
+          keyboardType="numeric"
+          value={weight}
+          onChangeText={(text) => setWeight(text)}
+        />
+        <Text>lbs</Text>
+      </View>
         </View>
         <Text style = {{fontSize: 20, fontWeight: 'bold', margin: 10}}>You consumed {totalCalories} calories today!</Text>
-        {/*If showInput true, view the input field. If not, hide it */}
-        {!showInput ? (
+        {!showInput ? ( //If showInput true, view the input field. If not, hide it
           <Pressable
             style = {styles.newButton}
             onPress={() => setShowInput(true)} /*When New Item button pressed, show the input field*/>
             <MaterialIcons name="fastfood" size={24} color="black" />
           </Pressable>
-        ) : (
-        <>
-          
-          <View style={styles.inputContainer} /*input container*/>
-            <View style={ {flexDirection: 'row', justifyContent: 'flex-start',}} /*Input container for item and calorie inputs*/>
-              <View>
-                <Text style = {{marginLeft: 10}}>Food: </Text>
-                <TextInput 
-                  style={styles.inputName}
-                  placeholder='Enter food name'
-                  value={food}
-                  onChangeText={(val) => setFood(val)} />
-              </View>
-              <View>
-                <Text style = {{marginLeft: 10}}>Calories: </Text>
-                <TextInput /*input for calories*/
-                  style={styles.inputCal}
-                  placeholder='Enter calories'
-                  keyboardType="numeric"
-                  value={calories.toString()}
-                  onChangeText={(val) => setCalories((val))} />
-              </View>
-              <View>
-                <Text> </Text>
-                <Pressable /*Pressable component to add food*/
-                  style={styles.addButton}
-                  onPress={() =>addFood()}>
-                  <Text style={{ fontWeight: "bold", textAlign: 'center'}}>Add</Text>
-                </Pressable>
-              </View>
-            </View>
-            
-            <View style={styles.inputContainerMacros} /*Input container for macros inputs*/>
-              <View>
-                <Text style = {{marginLeft: 10}}>Protein (g): </Text>
-                <TextInput /*input for protein*/
-                  style={styles.inputMacros}
-                  placeholder=''
-                  keyboardType="numeric"
-                  value={protein.toString()}
-                  onChangeText={(val) => setProtein((val))} />
-              </View>
-              <View>
-                <Text style = {{marginLeft: 10}}>Carbs (g): </Text>
-                <TextInput /*input for carbs*/
-                  style={styles.inputMacros}
-                  placeholder=''
-                  keyboardType="numeric"
-                  value={carbs.toString()}
-                  onChangeText={(val) => setCarbs((val))} />
-              </View>
-              <View>
-                <Text style = {{marginLeft: 10}}>Fat (g): </Text>
-                <TextInput /*input for fat*/
-                  style={styles.inputMacros}
-                  placeholder=''
-                  keyboardType="numeric"
-                  value={fats.toString()}
-                  onChangeText={(val) => setFats((val))} />
-              </View>
-            </View>
-            {/*PieChart showing statistical information of macros of current item*/}
-            <PieChart
-              data={[
-                { name: 'Protein', value: protein/1, color:'#2bae7c' },
-                { name: 'Carbs', value: carbs/1, color:'#87bda2' },
-                { name: 'Fats', value: fats/1, color:'#c9c9c9' },
-              ]}
-              width={250}
-              height={130}
-              chartConfig={{
-                color: (opacity = 3) => `rgba(255, 255, 255, ${opacity})`
-              }}
-              accessor="value" // This is the key to customize the displayed values
-              backgroundColor="transparent"
-              paddingLeft="15"
-            />
-            {/* <PieChart widthAndHeight={100} series={[protein+.01, carbs+.01, fats+.01]} sliceColor={['#2bae7c', '#87bda2', '#c9c9c9']} coverRadius={0.45} coverFill={'#FFF'} /> */}
-            <Pressable /*Pressable component to minimize input form*/
-                style = {styles.minimizeInputButton}
-                onPress={() => setShowInput(false)} /*When Minimize button pressed, hide the input form*/>
-                <MaterialIcons name="no-food" size={24} color="black" />
-            </Pressable>
-          </View></>
-        )}     
-    
-
-
+        ) : ( /*InputForm Component */
+          <InputForm
+            food={food}
+            calories={calories}
+            protein={protein}
+            carbs={carbs}
+            fats={fats}
+            setFood={setFood}
+            setCalories={setCalories}
+            setProtein={setProtein}
+            setCarbs={setCarbs}
+            setFats={setFats}
+            addFood={addFood}
+            setShowInput={setShowInput}
+          />
+        )}
+        {/*FlatList of items*/}     
         <View style = {styles.listContainer}>
             <FlatList 
               data = {foods}
@@ -184,30 +147,38 @@ export default function App() {
               )}
             />
         </View>
+        
       </View>
-      </TouchableWithoutFeedback>  
+      </TouchableWithoutFeedback> 
+       
   );
 }
-
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f4f4f4',
   },
-  header: {
-    padding: 15,
-    marginBottom:30,
-    justifyContent: 'flex-end',
-    height:105,
-    backgroundColor: '#7ECFAF',
+  inputSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  title: {
-    textAlign: 'justify',
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 20
+  heightInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  inputField: {
+    width: 50,
+    borderBottomWidth: 1,
+    marginLeft: 5,
+    marginRight: 5,
+    textAlign: 'center',
+  },
+  bodyInfoContainer: 
+  {
+    backgroundColor: '#D5D5D5',
+    borderWidth: 2,
+    borderRadius: 10,
   },
   newButton: {
     backgroundColor: '#4CAF50',
@@ -219,64 +190,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     flexDirection: 'row'
   },
-  inputContainer: {
-    justifyContent: 'space-between',
-    padding: 5,
-    margin: 7,
-    backgroundColor: '#D5D5D5',
-    borderWidth: 2,
-    borderRadius: 10,
-  },
-  inputContainerMacros: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginTop: -12
-  },
-  minimizeInputButton: {
-    backgroundColor: '#FF5C5C',
-    borderRadius: 10,
-    height: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 5,
-    marginHorizontal: 10,
-  },
-  addButton: {
-    backgroundColor: '#3498DB',
-    borderRadius: 10,
-    marginTop: 0.,
-    justifyContent: 'center',
-    height: 30,
-    width: 50,
-    margin: 20,
-  },
-  inputName: {
-    borderWidth: 1,
-    backgroundColor: '#7ECFAF',
-    borderColor: '#ddd',
-    padding: 6,
-    marginLeft: 5,
-    width: 150,
-    borderRadius: 10,
-  },
-  inputCal: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#7ECFAF',
-    padding: 6,
-    marginLeft: 5,
-    width: 110,
-    borderRadius: 10,
-  },
-  inputMacros: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#7ECFAF',
-    padding: 6,
-    marginLeft: 5,
-    width: 80,
-    borderRadius: 10,
-  },
   macrosSlider: {
     width: 150,
     height: 40,
@@ -285,11 +198,12 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
+    marginVertical: 5,
   },
   listItem: {
     alignItems: 'flex-start',
-    padding: 15,
-    margin: 5,
+    padding: 10,
+    margin: 2,
     borderWidth: 2,
     borderRadius: 10,
     borderColor: '#65A88E',
@@ -299,13 +213,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-
   listItemDetails: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   listItemMacro: {
     marginHorizontal: 3,
   },
 });
+
+   
