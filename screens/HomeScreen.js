@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Header from '../components/header';
 import InputForm from '../components/inputForm';
 
-export default function HomeScreen() {
+export default function HomeScreen( ) {
   //Hardcoded initial items for testing purposes
   const [foods, setFoods] = useState([
     {name: 'Chicken', cals: 220, carbs: 0, fats: 5, protein: 20, id: 0},

@@ -13,9 +13,10 @@ export default function LoginScreen(){
     const signIn = async () => {
         setLoading(true);
         try{
+            // Attempt to sign in using the provided email and password.
             const response = await signInWithEmailAndPassword(auth, email, password);
             console.log(response);
-        } catch (error) {
+        } catch (error) { //Logs and alerts the user of any errors occured
             console.log(error);
             alert('Sign in failed: ' + error.message);
         } finally {
@@ -25,10 +26,11 @@ export default function LoginScreen(){
     const signUp = async () => {
         setLoading(true);
         try{
+            // Attempt to create a new user account using the provided email and password.
             const response = await createUserWithEmailAndPassword(auth, email, password);
             console.log(response);
-            alert('Check email list!');
-        } catch (error) {
+            alert('Account Created!');
+        } catch (error) { //Logs and alerts the user of any errors occured
             console.log(error);
             alert('Sign in failed: ' + error.message);
         } finally {
