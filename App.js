@@ -32,7 +32,7 @@ export default function App(){
       <Stack.Navigator initialRouteName="Login">
         {user ? (
           //If authentication state exists, go to Home Screen, otherwise, go to login screen
-          <Stack.Screen options= {{headerShown: false}} name="Home" component={HomeLayout} />
+          <Stack.Screen options= {{headerShown: false}} name="HomeScreen" component={HomeLayout} />
         ) : (
           <Stack.Screen options= {{headerShown: false}} name="Login" component={LoginScreen} />
         )}
