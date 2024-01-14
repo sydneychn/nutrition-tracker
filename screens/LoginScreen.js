@@ -11,20 +11,20 @@ export default function LoginScreen(){
     const auth = FIREBASE_AUTH;
 
     const signIn = async () => {
-        setLoading(true);
+        //setLoading(true);
         try{
             // Attempt to sign in using the provided email and password.
             const response = await signInWithEmailAndPassword(auth, email, password);
             console.log(response);
         } catch (error) { //Logs and alerts the user of any errors occured
             console.log(error);
-            alert('Sign in failed: ' + error.message);
-        } finally {
+            Alert.alert('Login Failed', 'Incorrect email or password');
+        } /*finally {
             setLoading(false);
-        }
+        }*/
     }
     const signUp = async () => {
-        setLoading(true);
+        //setLoading(true);
         try{
             // Attempt to create a new user account using the provided email and password.
             const response = await createUserWithEmailAndPassword(auth, email, password);
@@ -33,9 +33,9 @@ export default function LoginScreen(){
         } catch (error) { //Logs and alerts the user of any errors occured
             console.log(error);
             alert('Sign in failed: ' + error.message);
-        } finally {
+        } /*finally {
             setLoading(false);
-        }
+        }*/
     }
 
 
@@ -43,7 +43,7 @@ export default function LoginScreen(){
         <TouchableWithoutFeedback onPress={() => {Keyboard.dismiss()}}>
             <View style={styles.container}>
                 <View style={styles.inputContainer}>
-                <Text style={{fontSize: 24, fontWeight: 'bold', margin: 6}}>Log In</Text>
+                <Text style={{fontSize: 24, fontWeight: 'bold', margin: 6}}>Log in to your account</Text>
                 <TextInput
                     style={styles.inputs}
                     placeholder="Email"

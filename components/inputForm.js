@@ -17,7 +17,7 @@ export default function InputForm({
     addFood,
     setShowInput}){
     return (
-        <View style={styles.inputContainer} /*input container*/>
+        <View style={styles.inputContainer} /*input container*/>             
             <View style={ {flexDirection: 'row', justifyContent: 'flex-start',}} /*Input container for item and calorie inputs*/>
               <View>
                 <Text style = {{marginLeft: 10}}>Food </Text>
@@ -41,7 +41,7 @@ export default function InputForm({
                 <TouchableOpacity /*Pressable component to add food*/
                   style={styles.addButton}
                   onPress={() =>addFood()}>
-                  <Text style={{ fontWeight: "bold", textAlign: 'center'}}>Add</Text>
+                  <Text style={{ fontWeight: "bold", textAlign: 'center', color: 'white'}}>Add</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -92,11 +92,12 @@ export default function InputForm({
               padding="10"
             />
             {/* <PieChart widthAndHeight={100} series={[protein+.01, carbs+.01, fats+.01]} sliceColor={['#2bae7c', '#87bda2', '#c9c9c9']} coverRadius={0.45} coverFill={'#FFF'} /> */}
-            <TouchableOpacity /*Pressable component to minimize input form*/
-                style = {styles.minimizeInputButton}
-                onPress={() => setShowInput(false)} /*When Minimize button pressed, hide the input form*/>
-                <MaterialIcons name="no-food" size={24} color="black" />
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowInput(false)}>
+                <MaterialIcons name="close" size={20} color="white" />
             </TouchableOpacity>
+
           </View>
     );
 }
@@ -104,18 +105,29 @@ export default function InputForm({
 const styles = StyleSheet.create({
     
     inputContainer: {
-        padding: 5,
+        padding: 10,
         marginHorizontal: 30,
         backgroundColor: '#D5D5D5',
         borderWidth: 2,
         borderRadius: 10,
+        position: 'relative'
+        },
+    closeButton: {
+        position: 'absolute',
+        top: 5,
+        right: 5,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'red', // Set your desired background color
         },
     inputName: {
         borderWidth: 1,
         backgroundColor: '#7ECFAF',
         borderColor: '#ddd',
         padding: 6,
-        margin: 3,
+        marginHorizontal: 3,
+        marginBottom: 10,
         width: 150,
         borderRadius: 10,
     },
@@ -124,18 +136,18 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         backgroundColor: '#7ECFAF',
         padding: 6,
-        margin: 3,
+        marginHorizontal: 3,
+        marginBottom: 10,
         width: 110,
         borderRadius: 10,
     },
     addButton: {
         backgroundColor: '#3498DB',
         borderRadius: 10,
-        margin: 3,
+        marginHorizontal: 3,
         justifyContent: 'center',
         height: 30,
-        width: 50,
-        
+        width: 50,        
     },
     inputContainerMacros: {
         flexDirection: 'row',
@@ -146,17 +158,10 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         backgroundColor: '#7ECFAF',
         padding: 6,
-        margin: 3,
+        marginHorizontal: 3,
         width: 80,
         borderRadius: 10,
         marginBottom: 1
     },
-    minimizeInputButton: {
-        backgroundColor: '#FF5C5C',
-        borderRadius: 10,
-        height: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginHorizontal: 10,
-    },
+
 });

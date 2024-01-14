@@ -3,58 +3,82 @@ import {StyleSheet, Text, View, FlatList, Keyboard, TouchableOpacity, KeyboardAv
 import { MaterialIcons } from '@expo/vector-icons';
 import Header from '../components/header';
 import InputForm from '../components/inputForm';
+import { FIRESTORE_DB } from '../FirebaseConfig';
+import { addDoc, collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 
 export default function HomeScreen( ) {
-  //Hardcoded initial items for testing purposes
+  //H
   const [foods, setFoods] = useState([
-    {name: 'Chicken', cals: 220, carbs: 0, fats: 5, protein: 20, id: 0},
-    {name: 'Milk', cals: 150, carbs: 0, fats: 10, protein: 10, id: 1},
-    {name: 'Rice', cals: 200, carbs: 15, fats: 0, protein: 0, id: 2},
-    {name: 'Eggs', cals: 70, carbs: 0, fats: 2, protein: 7, id: 3}
   ]);
   
   const [food, setFood] = useState(''); //new item to be added to list
   const [carbs, setCarbs] = useState('0'); //default item's carbs
   const [protein, setProtein] = useState('0'); //default item's protein
   const [fats, setFats] = useState('0'); //default item's fats
-  const [calories, setCalories] = useState(''); //default item's calories
-  const [totalCalories, setTotalCalories] = useState(640); //total calories 
+  const [calories, setCalories] = useState('0'); //default item's calories
+  const [totalCalories, setTotalCalories] = useState(0); //total calories
   const [showInput, setShowInput] = useState(false) //state to show/hide input field
   const [currentDate, setCurrentDate] = useState(new Date());
-
   const [heightFt, setHeightFt] = useState('');
   const [heightIn, setHeightIn] = useState('');
   const [weight, setWeight] = useState('');
 
+  //Constantly updates the collection to sync with our display, including calculating total calories
+  useEffect(() => {
+    const foodRef = collection(FIRESTORE_DB, 'newFoods')
+    const subscriber = onSnapshot(foodRef, {
+      next: (snapshot) => {
+        const foods = [];
+        let sum = 0;
+        snapshot.docs.forEach((doc) => {
+          console.log(doc.data())
+          foods.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+          sum += doc.data().cals;
+        });
+        setFoods(foods);
+        setTotalCalories(sum);
+      }
+    });
+    return () => subscriber();
+  }, []);
   //function that adds current item to the list and updates the total calories
   const addFood = ( )=> {
   //checks for missing input values
-    if (!food){ 
-      alert('You left it blank!');
+    if (!food || !carbs || !protein || !fats || !calories){ 
+      alert('You left a field blank!');
       return;
     }
-    console.log(calories);
-    console.log(protein);
-    console.log(carbs);
-    console.log(fats);
+ 
     const newFood = {
       name: food,
       cals: parseInt(calories),
       protein: parseFloat(protein),
       carbs: parseFloat(carbs),
       fats: parseFloat(fats),
-      id: Date.now(),
     }
+    //Adds to collection in firestore database
+    const doc = addDoc(collection(FIRESTORE_DB, 'newFoods'), newFood)
+    console.log(doc)  
     //Updates the the food list and totalCalories
-    setFoods((prevFoods) => {return [newFood, ...prevFoods]});
-    setTotalCalories(totalCalories + newFood.cals) 
+    // setTotalCalories(totalCalories + newFood.cals) 
     //sets default values for inputs after new item is added
     setFood('');
-    setCalories('');
-    setCarbs('');
-    setProtein('');
-    setFats('');
+    setCalories('0');
+    setCarbs('0');
+    setProtein('0');
+    setFats('0');
     Keyboard.dismiss();
+  }
+  //function that removes the slected food from list
+  const removeFood = (item) => {
+    const ref = doc(FIRESTORE_DB, `newFoods/${item.id}`);
+    deleteDoc(ref);
+    // const updatedFoods = foods.filter((item) => item.id !== id);
+    // setFoods(updatedFoods);
+    // setTotalCalories(totalCalories - foods.find((item => item.id === id)).cals)
   }
 
   //Getting Current Time
@@ -78,6 +102,7 @@ export default function HomeScreen( ) {
             style = {styles.newButton}
             onPress={() => setShowInput(true)} /*When New Item button pressed, show the input field*/>
             <MaterialIcons name="fastfood" size={24} color="black" />
+            <Text style = {{fontSize: 20, fontWeight: 'bold'}}>+</Text>
           </TouchableOpacity>
         ) : ( /*InputForm Component */
           <InputForm
@@ -99,18 +124,20 @@ export default function HomeScreen( ) {
         <View style = {styles.listContainer}>
             <FlatList 
               data = {foods}
-              renderItem= {({item}) =>(
+              renderItem= {({item}) => (
                 <TouchableOpacity /*item*/>
                   <View style={styles.listItem}>
-                      <Text style={styles.listItemText}>
-                        {item.name}
-                      </Text>
+                      <Text style={styles.listItemText}>{item.name}</Text>
                       <View style={styles.listItemDetails}>
                         <Text style={styles.listItemMacro}>P: {item.protein}</Text>
                         <Text style={styles.listItemMacro}>C: {item.carbs}</Text>
                         <Text style={styles.listItemMacro}>F: {item.fats}</Text>
                         <Text style={styles.listItemMacro}>Cal: {item.cals}</Text>
-                      </View>
+                        <TouchableOpacity /*Pressable component to minimize input form*/
+                          onPress={() => removeFood(item)}>
+                          <MaterialIcons name="remove-circle" size={25} color="red" />                        
+                      </TouchableOpacity>
+                      </View>                      
                   </View>
                 </TouchableOpacity>
               )}
