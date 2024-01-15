@@ -3,7 +3,7 @@ import {StyleSheet, Text, View, FlatList, Keyboard, TouchableOpacity, KeyboardAv
 import { MaterialIcons } from '@expo/vector-icons';
 import Header from '../components/header';
 import InputForm from '../components/inputForm';
-import { FIRESTORE_DB } from '../FirebaseConfig';
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../FirebaseConfig';
 import { addDoc, collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 
 export default function HomeScreen( ) {
@@ -22,10 +22,11 @@ export default function HomeScreen( ) {
   const [heightFt, setHeightFt] = useState('');
   const [heightIn, setHeightIn] = useState('');
   const [weight, setWeight] = useState('');
-
+  
   //Constantly updates the collection to sync with our display, including calculating total calories
   useEffect(() => {
-    const foodRef = collection(FIRESTORE_DB, 'newFoods')
+    const currentUserCollection = `${FIREBASE_AUTH.currentUser.uid}_foods`; //Each collection is the current user's id + '_foods'
+    const foodRef = collection(FIRESTORE_DB, currentUserCollection);
     const subscriber = onSnapshot(foodRef, {
       next: (snapshot) => {
         const foods = [];
@@ -43,8 +44,8 @@ export default function HomeScreen( ) {
       }
     });
     return () => subscriber();
-  }, []);
-  //function that adds current item to the list and updates the total calories
+  }, [FIREBASE_AUTH.currentUser]);
+  //function that adds current item to the collection in firestore
   const addFood = ( )=> {
   //checks for missing input values
     if (!food || !carbs || !protein || !fats || !calories){ 
@@ -60,10 +61,10 @@ export default function HomeScreen( ) {
       fats: parseFloat(fats),
     }
     //Adds to collection in firestore database
-    const doc = addDoc(collection(FIRESTORE_DB, 'newFoods'), newFood)
+    const currentUserCollection = `${FIREBASE_AUTH.currentUser.uid}_foods`;
+    const doc = addDoc(collection(FIRESTORE_DB, currentUserCollection), newFood);
     console.log(doc)  
     //Updates the the food list and totalCalories
-    // setTotalCalories(totalCalories + newFood.cals) 
     //sets default values for inputs after new item is added
     setFood('');
     setCalories('0');
@@ -74,11 +75,8 @@ export default function HomeScreen( ) {
   }
   //function that removes the slected food from list
   const removeFood = (item) => {
-    const ref = doc(FIRESTORE_DB, `newFoods/${item.id}`);
-    deleteDoc(ref);
-    // const updatedFoods = foods.filter((item) => item.id !== id);
-    // setFoods(updatedFoods);
-    // setTotalCalories(totalCalories - foods.find((item => item.id === id)).cals)
+    const ref = doc(FIRESTORE_DB, `${FIREBASE_AUTH.currentUser.uid}_foods/${item.id}`);
+    deleteDoc(ref); 
   }
 
   //Getting Current Time
@@ -92,7 +90,7 @@ export default function HomeScreen( ) {
   return (
     
     <TouchableWithoutFeedback onPress={() => {Keyboard.dismiss()
-    console.log("hello test");}}>
+    console.log(FIREBASE_AUTH.currentUser.uid);}}>
       <KeyboardAvoidingView style = {styles.container}>
         {/*Header Component*/}
         <Header currentDate={currentDate}></Header> 
