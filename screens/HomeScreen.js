@@ -6,7 +6,7 @@ import InputForm from '../components/inputForm';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../FirebaseConfig';
 import { addDoc, collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 
-export default function HomeScreen( ) {
+export default function HomeScreen(navigation) {
   //H
   const [foods, setFoods] = useState([
   ]);

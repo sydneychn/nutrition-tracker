@@ -2,16 +2,15 @@ import React, {useState} from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native'
 import { FIREBASE_AUTH } from '../FirebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function LoginScreen(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
-
+    const navigation = useNavigation();
     const signIn = async () => {
-        //setLoading(true);
         try{
             // Attempt to sign in using the provided email and password.
             const response = await signInWithEmailAndPassword(auth, email, password);
@@ -19,25 +18,9 @@ export default function LoginScreen(){
         } catch (error) { //Logs and alerts the user of any errors occured
             console.log(error);
             Alert.alert('Login Failed', 'Incorrect email or password');
-        } /*finally {
-            setLoading(false);
-        }*/
+        } 
     }
-    const signUp = async () => {
-        //setLoading(true);
-        try{
-            // Attempt to create a new user account using the provided email and password.
-            const response = await createUserWithEmailAndPassword(auth, email, password);
-            console.log(response);
-            alert('Account Created!');
-        } catch (error) { //Logs and alerts the user of any errors occured
-            console.log(error);
-            alert('Sign in failed: ' + error.message);
-        } /*finally {
-            setLoading(false);
-        }*/
-    }
-
+  
 
     return (
         <TouchableWithoutFeedback onPress={() => {Keyboard.dismiss()}}>
@@ -67,7 +50,7 @@ export default function LoginScreen(){
     
                   <TouchableOpacity 
                     style={styles.registerButton}
-                    onPress={() => signUp()}>
+                    onPress={() => navigation.navigate('Register')}>
                       <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>Register</Text>
                   </TouchableOpacity>
                 </View>
