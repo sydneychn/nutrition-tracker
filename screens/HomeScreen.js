@@ -1,14 +1,29 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, FlatList, Keyboard, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import {StyleSheet, Text, View, FlatList, Keyboard, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Header from '../components/header';
 import InputForm from '../components/inputForm';
+
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../FirebaseConfig';
 import { addDoc, collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 
 export default function HomeScreen(navigation) {
   //H
   const [foods, setFoods] = useState([
+    {
+      name: 'Help',
+      cals: 202,
+      protein: 19,
+      carbs: 30,
+      fats: 5,
+    },
+    {
+      name: 'Chicken',
+      cals: 202,
+      protein: 0,
+      carbs: 3,
+      fats: 30,
+    }
   ]);
   
   const [food, setFood] = useState(''); //new item to be added to list
@@ -91,96 +106,145 @@ export default function HomeScreen(navigation) {
     
     <TouchableWithoutFeedback onPress={() => {Keyboard.dismiss()
     console.log(FIREBASE_AUTH.currentUser.uid);}}>
-      <KeyboardAvoidingView style = {styles.container}>
+      <View style = {styles.container}>
         {/*Header Component*/}
         <Header currentDate={currentDate}></Header> 
-        <Text style = {{fontSize: 20, fontWeight: 'bold', margin: 10}}>You consumed {totalCalories} calories today!</Text>
-        {!showInput ? ( //If showInput true, view the input field. If not, hide it
-          <TouchableOpacity
-            style = {styles.newButton}
-            onPress={() => setShowInput(true)} /*When New Item button pressed, show the input field*/>
-            <MaterialIcons name="fastfood" size={24} color="black" />
-            <Text style = {{fontSize: 20, fontWeight: 'bold'}}>+</Text>
-          </TouchableOpacity>
-        ) : ( /*InputForm Component */
-          <InputForm
-            food={food}
-            calories={calories}
-            protein={protein}
-            carbs={carbs}
-            fats={fats}
-            setFood={setFood}
-            setCalories={setCalories}
-            setProtein={setProtein}
-            setCarbs={setCarbs}
-            setFats={setFats}
-            addFood={addFood}
-            setShowInput={setShowInput}
-          />
-        )}
-        {/*FlatList of items*/}     
-        <View style = {styles.listContainer}>
+        <View style = {[styles.goalsContainer, styles.shadowProp]}>
+          <View style = {styles.goalsHeading}>
+              <Text style = {styles.cardTitleText}>Today's Goals</Text>
+              <Text style = {styles.dateText}> {currentDate.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</Text>
+          </View>
+          <View style = {styles.totalCalorieContainer}>
+            <View style = {styles.totalCalorieText}>
+              <Text style>Total Calories:</Text>
+              <Text>1070/2000</Text>
+            </View>
+            <View style = {styles.totalCalorieBar}>
+              
+            </View>
+          </View>
+        </View>
+        <View style = {[styles.listContainer, styles.shadowProp]}>
+              <View style = {styles.listHeading}>
+                <Text style = {styles.cardTitleText}>Today's Consumptions</Text>
+              </View>
+            {!showInput ? ( //If showInput true, view the input field. If not, hide it
+              <TouchableOpacity
+                style = {[styles.newButton, styles.shadowProp]}
+                onPress={() => setShowInput(true)} /*When New Item button pressed, show the input field*/>                
+                <Text style = {{fontFamily: 'FiraMono_400Regular'}}>Add Item</Text>
+              </TouchableOpacity>
+            ) : ( /*InputForm Component */
+              <InputForm
+                food={food}
+                calories={calories}
+                protein={protein}
+                carbs={carbs}
+                fats={fats}
+                setFood={setFood}
+                setCalories={setCalories}
+                setProtein={setProtein}
+                setCarbs={setCarbs}
+                setFats={setFats}
+                addFood={addFood}
+                setShowInput={setShowInput}
+              />
+            )}
             <FlatList 
               data = {foods}
               renderItem= {({item}) => (
-                <TouchableOpacity /*item*/>
-                  <View style={styles.listItem}>
-                      <Text style={styles.listItemText}>{item.name}</Text>
+                <TouchableOpacity item> 
+                  <View style={[styles.listItem, styles.shadowProp]}> 
                       <View style={styles.listItemDetails}>
-                        <Text style={styles.listItemMacro}>P: {item.protein}</Text>
-                        <Text style={styles.listItemMacro}>C: {item.carbs}</Text>
-                        <Text style={styles.listItemMacro}>F: {item.fats}</Text>
-                        <Text style={styles.listItemMacro}>Cal: {item.cals}</Text>
+                        <Text style={styles.listItemText}>{item.name} - {item.cals} Calories</Text>
+                        <Text style={styles.listItemMacroText}>Protein: {item.protein}g | Carbs: {item.carbs}g | Fat: {item.fats}g </Text>
+                      </View>   
+                      <View style = {{justifyContent: 'center'}}>
                         <TouchableOpacity /*Pressable component to minimize input form*/
-                          onPress={() => removeFood(item)}>
-                          <MaterialIcons name="remove-circle" size={25} color="red" />                        
-                      </TouchableOpacity>
-                      </View>                      
+                            onPress={() => removeFood(item)}>
+                            <MaterialCommunityIcons name="trash-can-outline" size={30} color="#E57E68" />                        
+                        </TouchableOpacity>          
+                      </View>     
                   </View>
                 </TouchableOpacity>
               )}
             />
         </View>
-        
-      </KeyboardAvoidingView>
+        </View>
+        {/*FlatList of items*/}     
       </TouchableWithoutFeedback> 
        
   );
 }
+        
+    
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f4f4',
+    backgroundColor: '#E8E8E8',
+    alignItems: 'center'
   },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {height: 5},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    },
   inputSection: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-  },
-  heightInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   inputField: {
     width: 50,
     borderBottomWidth: 1,
     textAlign: 'center',
   },
-  bodyInfoContainer: {
-    backgroundColor: '#D5D5D5',
-    borderWidth: 2,
-    borderRadius: 10,
-    flex: 0.5
+  goalsContainer: {
+    flex: 1,
+    marginVertical: 20,
+    padding: 12,
+    borderRadius: 16,
+    width: '90%',
+    backgroundColor: '#E3F6EC',
+  },
+  goalsHeading: {
+    flexDirection: 'row',
+    padding: 2,
+    margin: 5,
+  },
+  listHeading: {
+    padding: 2,
+    margin: 5,
+  },
+  cardTitleText: {
+    flex: 1,
+    fontSize: 18,
+    fontFamily: 'FiraMono_700Bold',
+  },
+  dateText: {
+    fontSize: 12,
+    fontFamily: 'FiraMono_400Regular',
+  },
+  totalCalorieContainer: {
+    flexDirection: 'row',
+  },
+  totalCalorieText: {
+    flex:1,
+    backgroundColor: 'grey',
+    alignItems: 'flex-end'
+  },
+  totalCalorieBar: {
+    flex:1,
+    backgroundColor: 'blue'
   },
   newButton: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 10,
-    height: 35,
-    justifyContent: 'center',
+    backgroundColor: '#ABC3CD',
+    borderRadius: 16,    
+    padding: 10,
+    margin: 8,
     alignItems: 'center',
-    marginVertical: 5,
-    marginHorizontal: 10,
-    flexDirection: 'row'
+    marginHorizontal: '35%'
   },
   macrosSlider: {
     width: 150,
@@ -189,29 +253,36 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   listContainer: {
-    flex: 2,
+    flex: 3,
     marginVertical: 5,
+    padding: 12,
+    borderRadius: 16,
+    width: '90%',
+    backgroundColor: '#E3F6EC',
   },
   listItem: {
-    alignItems: 'flex-start',
+    flex: 1,
     padding: 10,
-    margin: 2,
-    borderWidth: 2,
+    margin: 10,
     borderRadius: 10,
-    borderColor: '#65A88E',
-    backgroundColor: '#DFEFE9',
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row'
   },
   listItemText: {
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
+    marginVertical: 5,
+    fontFamily: 'FiraMono_500Medium',
+  },
+  listItemMacroText: {
+    marginHorizontal: 3,
+    fontSize: 12,
+    fontFamily: 'FiraMono_400Regular',
   },
   listItemDetails: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flex: 1,
+    alignContent : 'center',
   },
-  listItemMacro: {
-    marginHorizontal: 3,
-  },
+  
 });
 
    

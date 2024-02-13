@@ -21,8 +21,8 @@ function HomeLayout() {
 function LoginLayout(){
   return (
   <LoginStack.Navigator initialRouteName="Login">
-    <LoginStack.Screen options= {{headerShown: true}} name="Login" component={LoginScreen} />
-    <LoginStack.Screen options= {{headerShown: true}} name="Register" component={RegisterScreen} />
+    <LoginStack.Screen options= {{headerShown: false, headerStyle: {backgroundColor: '#DFEFE9'}}} name="Login" component={LoginScreen}  />
+    <LoginStack.Screen options= {{headerShown: false, headerStyle: {backgroundColor: '#DFEFE9'}}} name="Register" component={RegisterScreen} />
   </LoginStack.Navigator>
   );
 }

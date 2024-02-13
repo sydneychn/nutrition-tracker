@@ -1,16 +1,15 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert, Button} from 'react-native'
 import { FIREBASE_AUTH } from '../FirebaseConfig';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword} from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
-
 export default function RegisterScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const auth = FIREBASE_AUTH;
-
+    const navigation = useNavigation();
     const signUp = async () => {
         try{
             // Attempt to create a new user account using the provided email and password.
@@ -40,77 +39,83 @@ export default function RegisterScreen() {
     return (
     
     <TouchableWithoutFeedback onPress={() => {Keyboard.dismiss()}}>
-    <View style={styles.container}>
-        <View style={styles.inputContainer}>
-        <Text style={{fontSize: 24, fontWeight: 'bold', margin: 6}}>Create an account</Text>
-        <TextInput
-            style={styles.inputs}
-            placeholder="Your Email"
-            value={email}
-            onChangeText={val => setEmail(val)}
-            autoCapitalize='none'
-        />
-        <TextInput
-            style={styles.inputs}
-            placeholder="Choose your password"     
-            secureTextEntry={true}
-            value={password}
-            onChangeText={val => setPassword(val)}
-        />
-        <TextInput
-            style={styles.inputs}
-            placeholder="Confirm your password"     
-            secureTextEntry={true}
-            value={confirmPassword}
-            onChangeText={val => setConfirmPassword(val)}
-        />
-        <View alignItems = 'center'>
-          <TouchableOpacity 
-            style={styles.registerButton}
-            onPress={() => verifyPassword()}>
-              <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>Create Account!</Text>
-          </TouchableOpacity>
+        <View style={styles.container}>
+            <View style={[styles.inputContainer, styles.shadowProp]}>
+                <Text style={{fontSize: 20, fontWeight: 'bold', margin: 6, fontFamily: 'FiraMono_700Bold'}}>Create an account</Text>
+                <TextInput
+                    style={styles.inputs}
+                    placeholder="Your Email"
+                    value={email}
+                    onChangeText={val => setEmail(val)}
+                    autoCapitalize='none'
+                />
+                <TextInput
+                    style={styles.inputs}
+                    placeholder="Choose your password"     
+                    secureTextEntry={true}
+                    value={password}
+                    onChangeText={val => setPassword(val)}
+                />
+                <TextInput
+                    style={styles.inputs}
+                    placeholder="Confirm your password"     
+                    secureTextEntry={true}
+                    value={confirmPassword}
+                    onChangeText={val => setConfirmPassword(val)}
+                />
+                <View alignItems = 'center'>
+                <TouchableOpacity 
+                    style={[styles.registerButton, styles.shadowProp]}
+                    onPress={() => verifyPassword()}>
+                    <Text style={{fontSize: 16, fontFamily: 'FiraMono_500Medium'}}>Sign up</Text>
+                </TouchableOpacity>
+                </View>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                        <Text style = {{color: '#ABCDBA', fontFamily: 'FiraMono_700Bold'}}>Already have an account? Click here</Text>
+            </TouchableOpacity>
+            </View>
         </View>
-        </View>
-    </View>
-</TouchableWithoutFeedback>
+    </TouchableWithoutFeedback>
   )
 }
 
 const styles = StyleSheet.create({
     container: {
-    flex: 1,
-    backgroundColor: '#f4f4f4',
-    justifyContent: 'center',
-    padding: 20,
-    },
+        flex: 1,
+        backgroundColor: '#ABCDBA',
+        justifyContent: 'center',
+        padding: 20,
+        },
+    shadowProp: {
+        shadowColor: '#171717',
+        shadowOffset: {height: 5},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        },
     inputContainer: {
-    backgroundColor: '#DFEFE9',
-    borderRadius: 8,
-    padding: 20,
-    },
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+        height: '42%'
+        },
     inputs: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginVertical: 6,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: 'white',
-    },
-    loginButton: {
-    backgroundColor: '#65A88E',
-    borderRadius: 8,
-    padding: 18,
-    alignItems: 'center',
-    marginVertical: 10,
-    width: '50%'
+        fontSize: 14,
+        fontWeight: 'bold',
+        fontFamily: 'FiraMono_400Regular',
+        marginVertical: 8,
+        width: '90%',
+        padding: 12,
+        borderRadius: 16,
+        borderWidth: 1,
+        backgroundColor: 'white',
     },
     registerButton: {
-    backgroundColor: '#4E7D68',
-    borderRadius: 8,
-    padding: 18,
-    margin: 5,
-    alignItems: 'center',
-    width: '50%'
+        backgroundColor: '#ABCDBA',
+        borderRadius: 8,
+        padding: 16,
+        alignItems: 'center',
+        marginVertical: 12,
+        width: 170
     }
 });

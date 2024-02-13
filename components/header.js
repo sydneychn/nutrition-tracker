@@ -20,16 +20,15 @@ export default function Header({ currentDate }) {
     );
   }
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, styles.shadowProp]}>
       <View style={styles.titleContainer}>
-        <Text style={styles.dateText}> 
-          {currentDate.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}{/*Display current date*/}</Text> 
-        <Text style={styles.welcomeText}>Welcome Back, {FIREBASE_AUTH.currentUser.email}!</Text>
+        
+        <Text style={styles.welcomeText}>Welcome back, Sydney!</Text>
       </View>
       <TouchableOpacity /*Pressable component to signOut*/
-        style={styles.signOutButton}
+        style={[styles.signOutButton, styles.shadowProp]}
         onPress={() => handleSignOut()}>
-        <MaterialIcons name="logout" size={20} color="white" />
+        <Text style = {{fontFamily: 'FiraMono_400Regular', fontSize:13}}>Not you?Sign out</Text>
       </TouchableOpacity>
     </View>
   );
@@ -37,32 +36,37 @@ export default function Header({ currentDate }) {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 35,
-    padding: 15,
-    marginBottom: 20,
+    paddingTop: 20,
+    padding: 12,
+    marginBottom: 10,
     flexDirection: 'row',
-    backgroundColor: '#7ECFAF',
+    backgroundColor: '#ABCDBA',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {height: 5},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    },
   titleContainer: {
     flexDirection: 'column',
+    padding: 8,
+    marginTop: 25,
+    flex: 3
   },
-  dateText: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  welcomeText: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 20,
+  welcomeText: { 
+    fontFamily: 'FiraMono_700Bold',
+    fontSize: 18,
   },
   signOutButton: {
-    backgroundColor: '#DF5454',
-    borderRadius: 10,
-    padding: 10,
+    flex: 1,
+    backgroundColor: '#E3F6EC',
+    borderRadius: 12,
+    padding: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  
 });
